@@ -12,6 +12,9 @@ class FriendViewController: UICollectionViewController, UICollectionViewDelegate
     let cellId = "cellId"
     
     var messages: [Message]?
+    override func viewWillAppear(_ animated: Bool) {
+        tabBarController?.tabBar.isHidden = false
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,6 +55,14 @@ class FriendViewController: UICollectionViewController, UICollectionViewDelegate
 }
 
 class MessageCell: BaseCell {
+    override var isHighlighted: Bool {
+        didSet{
+            backgroundColor = isHighlighted ? UIColor(red: 0/255, green: 134/255, blue: 245/255, alpha: 1) : UIColor.white
+            nameLabel.textColor = isHighlighted ? UIColor.white : UIColor.black
+            timeLabel.textColor = isHighlighted ? UIColor.white : UIColor.black
+            messageLabel.textColor = isHighlighted ? UIColor.white : UIColor.black
+        }
+    }
     var message: Message? {
         didSet {
             nameLabel.text = message?.friend?.name
@@ -63,11 +74,15 @@ class MessageCell: BaseCell {
             if let date = message?.time {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "h:mm a"
+                let elapsedTimeInSeconds = NSDate().timeIntervalSince((date as NSDate) as Date)
+                let secondsInDay: TimeInterval = 60 * 60 * 24
+                if elapsedTimeInSeconds > 7 * secondsInDay {
+                    dateFormatter.dateFormat = "dd/MM/YYYY"
+                } else if elapsedTimeInSeconds > secondsInDay {
+                    dateFormatter.dateFormat = "EEE"
+                }
                 timeLabel.text = dateFormatter.string(from: date as Date)
             }
-            //            if let user = message?.friend?.profileImageName {
-            //                hasReadMessage.image = UIImage(named: user)
-            //            }
         }
     }
     let profileImageView: UIImageView = {
@@ -85,15 +100,13 @@ class MessageCell: BaseCell {
     }()
     let nameLabel: UILabel = {
         let name = UILabel()
-        name.text = "Friend Name"
         name.textColor = UIColor.black
         name.font = UIFont.systemFont(ofSize: 18)
         return name
     }()
     let messageLabel: UILabel = {
         let message = UILabel()
-        message.text = "Message send by your friend"
-        message.font = UIFont.systemFont(ofSize: 14)
+        message.font = UIFont.systemFont(ofSize: 16)
         message.textColor = UIColor.gray
         return message
     }()
@@ -131,7 +144,6 @@ class MessageCell: BaseCell {
     }
     private func setupContainerView(){
         let containerView = UIView()
-        containerView.backgroundColor = UIColor.white
         addSubview(containerView)
         containerView.addSubview(nameLabel)
         containerView.addSubview(messageLabel)
@@ -169,7 +181,6 @@ class BaseCell: UICollectionViewCell {
         fatalError("init(frame: ) has not been implemented")
     }
     func setUpView(){
-        backgroundColor = UIColor.blue
     }
 }
 

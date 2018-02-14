@@ -46,13 +46,27 @@ extension  FriendViewController {
         let steve = NSEntityDescription.insertNewObject(forEntityName: "Friend", into: context) as! Friend
         steve.name = "Steve Jobs"
         steve.profileImageName = "steve_profile"
-        createMessageWithText("Good Morning", steve, 2, context)
-        createMessageWithText("I'm Steve Jobs", steve, 1, context)
-        createMessageWithText("Would you like to buy an Apple Device", steve, 0, context)
+            FriendViewController.createMessageWithText("Good Morning", steve, 2, context)
+            FriendViewController.createMessageWithText("I'm Steve Jobs", steve, 1, context)
+            FriendViewController.createMessageWithText("Are you interested in buying an Apple device? We have a wide variety of Apple devices that will suit your needs.  Please make your purchase with us.", steve, 1, context)
+            FriendViewController.createMessageWithText("Yes. I would love to buy iPhone X", steve, 1, context, isSender: true)
+            FriendViewController.createMessageWithText("Totally understand that you want the new iPhone 7, but you'll have to wait until September for the new release. Sorry but thats just how Apple likes to do things.", steve, 1, context)
+            FriendViewController.createMessageWithText("Absolutely, I'll just use my gigantic iPhone 6 Plus until then!!!", steve, 1, context, isSender: true)
         let donald = NSEntityDescription.insertNewObject(forEntityName: "Friend", into: context) as! Friend
         donald.name = "Donald Trump"
         donald.profileImageName = "donald_trump_profile"
-        createMessageWithText("bruh", donald, 5, context)
+            FriendViewController.createMessageWithText("bruh", donald, 5, context)
+        let gandhi = NSEntityDescription.insertNewObject(forEntityName: "Friend", into: context) as! Friend
+        gandhi.name = "Mahatma Gandhi"
+        gandhi.profileImageName = "gandhi"
+        
+            FriendViewController.createMessageWithText("Love, Peace, and Joy", gandhi, 60 * 24, context)
+        
+        let hillary = NSEntityDescription.insertNewObject(forEntityName: "Friend", into: context) as! Friend
+        hillary.name = "Hillary Clinton"
+        hillary.profileImageName = "hillary_profile"
+        
+            FriendViewController.createMessageWithText("Please vote for me, you did for Billy!", hillary, 20 * 60 * 24, context)
             do{
                try(context.save())
             } catch let error {
@@ -63,11 +77,13 @@ extension  FriendViewController {
         loadData()
     }
     
-    func createMessageWithText(_ text: String, _ friend: Friend,_ minuesAgo: Double,_ context: NSManagedObjectContext) {
+   static func createMessageWithText(_ text: String, _ friend: Friend,_ minuesAgo: Double,_ context: NSManagedObjectContext, isSender: Bool = false) -> Message {
         let message = NSEntityDescription.insertNewObject(forEntityName: "Message", into: context) as! Message
         message.friend = friend
         message.text = text
         message.time = NSDate().addingTimeInterval(-minuesAgo * 60) as Date
+        message.isSender = NSNumber(booleanLiteral: isSender) as! Bool
+        return message
     }
     
     func loadData() {
